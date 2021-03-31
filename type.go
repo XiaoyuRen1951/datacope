@@ -132,6 +132,7 @@ type GPUInfo struct {
 	GPUUtil []GPUHistory	`json:"gpuutil"`
 	NumGPU int64	`json:"numgpu"`
 	GPUMem []GPUMemHistory	`json:"gpumem"`
+	GPUMemCopy []GPUHistory	`json:"gpumemcpyutil"`
 	//Ratio []GPUutilratio
 }
 
@@ -174,10 +175,10 @@ type PodMetricsList struct {
 
 type NodeIO struct {
 	Node string `json:"node"`
-	IRate []float64 `json:"Irate"`
-	ORate []float64 `json:"Orate"`
-	IbIRate []float64 `json:"Iibrate"`
-	IbORate []float64 `json:"Oibrate"`
+	IRate map[int64]float64 `json:"recieve_rate"`
+	ORate map[int64]float64 `json:"transmit_rate"`
+	IbIRate map[int64]float64 `json:"ib_recieve_rate"`
+	IbORate map[int64]float64 `json:"ib_transmit_rate"`
 }
 
 type NodeGPUstateElem struct {
@@ -233,4 +234,3 @@ func (bar *Bar) Play(cur int64) {
     }
     fmt.Printf("\r[%-50s]%3d%%  %8d/%d", bar.rate, bar.percent, bar.cur, bar.total)
 }
-

@@ -249,6 +249,45 @@ func Readgpuinfoutil() error {
 	return nil
 }
 
+func Readgpumemcpyutil() error {
+	File, err := os.Open("./data/gpumemcpyutil.json")
+	defer File.Close()
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	rd := bufio.NewReader(File)
+
+	for {
+		line, err := rd.ReadString('\n')
+		if err != nil || io.EOF == err {
+			break
+		}
+
+		if line[0] != '{' {
+			continue
+		}
+		
+		res := new(GPUHistory)
+		prdec := json.NewDecoder(strings.NewReader(line))
+		err = prdec.Decode(&res)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		
+		if val, ok := Podmp[res.Pod]; ok {
+			//Deal With GPU Utilization
+			val.GPU.GPUMemCopy = append(val.GPU.GPUMemCopy, *res)
+			Podmp[res.Pod] = val
+			
+		}
+	}
+	return nil
+}
+
 func Readmeminfo() error {
 	File, err := os.Open("./data/meminfo.json")
 	defer File.Close()
@@ -578,13 +617,14 @@ func AverageVal(filepath string) {
 		if leng := len(v.CPU.History); leng == 0 {
 			continue
 		}
-		cpuutil := Cal_Average_float(v.CPU.History)*100 / float64(v.CPU.Limit)
+		cpuutil := Cal_Average_float(v.CPU.History) * 100 / float64(v.CPU.Limit)
 		
 		if cpuutil == 0 && res == 0 && gpumemr == 0 {
 			continue
-		} 
+		}
+		memutil := Decimal(Cal_Average_int(v.Memory.History) * 100 / float64(v.Memory.Limit) )
 		tmp.WriteString(v.Pod+" ")
-		tmp.WriteString(fmt.Sprintf("%v %v %v %v %v\n", res, cpuutil, gpumemr, v.GPU.GPUUtil[0].MaxR, gpumemmxr))
+		tmp.WriteString(fmt.Sprintf("%v %v %v %v %v %v\n", res, cpuutil, gpumemr, v.GPU.GPUUtil[0].MaxR, gpumemmxr, memutil))
 		
 		
 	}
