@@ -43,9 +43,9 @@ func main() {
 		// Readnodeio(path, tmp)
 	}
 	//CalTime()
-	CalNodeBusy()
+	//CalNodeBusy()
 	//CalGPUWaste("./gpuwaste.log")
-	//AverageVal("./pcie.log")
+	AverageVal("./pcie.log")
 	//TaskMemUtui("./tmp.log")
 	//DiffResourceTGPUUti("./tmp.log")
 	//SCGPUUtui("./tmp-1.log")
